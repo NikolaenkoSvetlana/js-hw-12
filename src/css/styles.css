@@ -118,3 +118,7 @@ p {
     transform: rotate(360deg);
   }
 }
+
+.load-more-hidden {
+  display: none;
+}
