@@ -1,3 +1,9 @@
+/**
+  |============================
+  | include css partials with
+  | default @import url()
+  |============================
+*/
 @import url('./reset.css');
 
 body {
@@ -76,12 +82,14 @@ button:hover {
   border: 1px solid #808080;
   max-width: 360px;
   height: 300px;
+  /* 200px */
   list-style: none;
 }
 
 .contentCard {
   width: 100%;
   height: 252px;
+  /* 152px */
   object-fit: cover;
 }
 
@@ -117,8 +125,4 @@ p {
   100% {
     transform: rotate(360deg);
   }
-}
-
-.load-more-hidden {
-  display: none;
 }

@@ -2,8 +2,7 @@ import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import axios from 'axios';
-import { fetchImages } from '../src/js/pixabay-api.js';
+import { fetchImages, fetchMoreImages } from '../src/js/pixabay-api.js';
 import { clearGallery, createMarkup } from '../src/js/render-functions.js';
 
 const lightbox = new SimpleLightbox('.gallery a', {
@@ -13,11 +12,13 @@ const lightbox = new SimpleLightbox('.gallery a', {
 const searchForm = document.getElementById('search-form');
 const searchInput = document.getElementById('search-input');
 const loader = document.querySelector('.loader');
-const btnLoad = document.querySelector('.js-load-more');
+const loadMoreButton = document.getElementById('load');
+
+let keyword = '';
 
 searchForm.addEventListener('submit', async event => {
   event.preventDefault();
-  const keyword = searchInput.value.trim();
+  keyword = searchInput.value.trim();
   if (!keyword) {
     iziToast.error({
       position: 'topRight',
@@ -29,7 +30,7 @@ searchForm.addEventListener('submit', async event => {
   loader.style.display = 'block';
   clearGallery();
   try {
-    const images = await fetchImages(keyword, 1); // Починаємо з першої сторінки
+    const images = await fetchImages(keyword);
     if (images.length === 0) {
       iziToast.info({
         position: 'topRight',
@@ -40,8 +41,7 @@ searchForm.addEventListener('submit', async event => {
     } else {
       createMarkup(images);
       lightbox.refresh();
-      // Показуємо кнопку "Load more", якщо отримано зображення
-      btnLoad.classList.remove('load-more-hidden');
+      loadMoreButton.style.display = 'block'; // Show load more button
     }
   } catch (error) {
     console.error('Error fetching images:', error);
@@ -56,33 +56,28 @@ searchForm.addEventListener('submit', async event => {
   }
 });
 
-// Додаємо обробник події для кнопки "Load more"
-btnLoad.addEventListener('click', async () => {
-  const keyword = searchInput.value.trim();
-  if (!keyword) {
-    iziToast.error({
-      position: 'topRight',
-      title: 'Error',
-      message: 'Please enter a keyword for search.',
-    });
-    return;
-  }
-  // loader.style.display = 'block';
+loadMoreButton.addEventListener('click', async () => {
+  loader.style.display = 'block';
   try {
-    const images = await fetchImages(keyword, 2); // Починаємо з другої сторінки
-    if (images.length === 0) {
-      alert('No more images available.');
-    } else {
-      createMarkup(images);
+    const moreImages = await fetchMoreImages();
+    if (moreImages.length > 0) {
+      createMarkup(moreImages);
       lightbox.refresh();
+    } else {
+      iziToast.info({
+        position: 'topRight',
+        title: 'Info',
+        message: "We're sorry, but you've reached the end of search results.",
+      });
+      loadMoreButton.style.display = 'none'; // Hide load more button when no more images available
     }
   } catch (error) {
-    console.error('Error fetching images:', error);
+    console.error('Error fetching more images:', error);
     iziToast.error({
       position: 'topRight',
       title: 'Error',
       message:
-        'An error occurred while fetching images. Please try again later.',
+        'An error occurred while fetching more images. Please try again later.',
     });
   } finally {
     loader.style.display = 'none';
