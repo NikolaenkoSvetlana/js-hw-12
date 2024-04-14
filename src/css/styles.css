@@ -73,6 +73,9 @@ button:hover {
 
 #load {
   display: none;
+  margin: 0 auto; /* Центрування горизонтальне */
+  margin-top: 20px; /* Додатковий відступ зверху */
+  width: 120px;
 }
 
 #gallery {
