@@ -71,6 +71,10 @@ button:hover {
   background-color: #6c8cff;
 }
 
+#load {
+  display: none;
+}
+
 #gallery {
   display: flex;
   flex-wrap: wrap;

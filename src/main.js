@@ -63,13 +63,24 @@ loadMoreButton.addEventListener('click', async () => {
     if (moreImages.length > 0) {
       createMarkup(moreImages);
       lightbox.refresh();
+
+      // Отримання висоти однієї карточки галереї
+      const galleryItemHeight = document
+        .querySelector('.card')
+        .getBoundingClientRect().height;
+
+      // Прокрутка сторінки на дві висоти карточки галереї
+      window.scrollBy({
+        top: galleryItemHeight * 2,
+        behavior: 'smooth', // Додаємо плавність
+      });
     } else {
       iziToast.info({
         position: 'topRight',
         title: 'Info',
         message: "We're sorry, but you've reached the end of search results.",
       });
-      loadMoreButton.style.display = 'none'; // Hide load more button when no more images available
+      loadMoreButton.style.display = 'none'; // Приховуємо кнопку "Load more", якщо немає більше зображень
     }
   } catch (error) {
     console.error('Error fetching more images:', error);
